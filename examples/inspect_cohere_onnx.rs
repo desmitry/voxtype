@@ -6,7 +6,6 @@
 use std::env;
 use std::path::PathBuf;
 
-use ort::session::Session;
 use ort::value::ValueType;
 
 fn type_str(ty: &ValueType) -> String {
@@ -41,7 +40,7 @@ fn type_str(ty: &ValueType) -> String {
 fn dump(label: &str, path: &PathBuf) -> ort::Result<()> {
     println!("\n=== {label} ===");
     println!("file: {}", path.display());
-    let session = Session::builder()?.commit_from_file(path)?;
+    let session = voxtype::ort_env::session_builder()?.commit_from_file(path)?;
     println!("inputs:");
     for (i, input) in session.inputs().iter().enumerate() {
         println!("  [{i}] {} : {}", input.name(), type_str(input.dtype()));
