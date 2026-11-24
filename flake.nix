@@ -150,7 +150,7 @@
 
         # Wrap an ONNX package with runtime dependencies and ORT_DYLIB_PATH
         # ONNX engines need ONNX Runtime at runtime for inference
-        libExt = if pkgs.stdenv.isDarwin then "dylib" else "so";
+        libExt = if pkgs.stdenv.hostPlatform.isDarwin then "dylib" else "so";
         wrapOnnx = { onnxruntime ? pkgs.onnxruntime, pkg, extraWrapperArgs ? "" }: pkgs.symlinkJoin {
           name = "${pkg.pname or "voxtype"}-wrapped-${pkg.version}";
           paths = [ pkg ];
