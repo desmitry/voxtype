@@ -328,7 +328,7 @@ const URGENCY_CHOICES: &[&str] = &["low", "normal", "critical"];
 const PASTE_KEY_CHOICES: &[&str] = &["auto", "shift+insert", "ctrl+v", "ctrl+shift+v", "super+v"];
 const STATE_FILE_CHOICES: &[&str] = &["auto", "disabled"];
 const MEETING_STORAGE_CHOICES: &[&str] = &["auto"];
-const DIARIZATION_BACKEND_CHOICES: &[&str] = &["simple", "ml", "hybrid"];
+const DIARIZATION_BACKEND_CHOICES: &[&str] = &["simple", "ml", "hybrid", "sortformer"];
 const SUMMARY_BACKEND_CHOICES: &[&str] = &["agent", "local", "remote", "disabled"];
 const ASSISTANT_AGENT_CHOICES: &[&str] = crate::meeting::assistant::SUPPORTED_AGENTS;
 

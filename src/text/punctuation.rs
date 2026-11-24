@@ -76,7 +76,7 @@ impl PunctuationCaser {
                 tokenizer_path.display()
             ))
         })?;
-        let session = Session::builder()
+        let session = crate::ort_env::session_builder()
             .map_err(|e| TranscribeError::InitFailed(format!("ONNX session builder failed: {e}")))?
             .with_intra_threads(num_cpus::get().min(4))
             .map_err(|e| {

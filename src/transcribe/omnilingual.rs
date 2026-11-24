@@ -75,7 +75,7 @@ impl OmnilingualTranscriber {
         // MIGraphX 7.2 produces garbled output and pays a 65s+ first-call
         // compile penalty on this graph, so we keep the engine on CPU on
         // the AMD-targeted binary.
-        let session = Session::builder()
+        let session = crate::ort_env::session_builder()
             .map_err(|e| {
                 TranscribeError::InitFailed(format!("ONNX session builder failed: {}", e))
             })?

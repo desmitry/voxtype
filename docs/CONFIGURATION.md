@@ -4360,7 +4360,7 @@ Enable speaker diarization to identify different speakers in meeting transcripts
 
 ### backend
 
-**Type:** String (`"simple"`, `"ml"`, `"hybrid"`, `"subprocess"`)
+**Type:** String (`"simple"`, `"ml"`, `"hybrid"`, `"sortformer"`, `"subprocess"`)
 **Default:** `"simple"`
 **Required:** No
 **CLI:** `voxtype meeting start --diarization <backend>` (or `VOXTYPE_MEETING_DIARIZATION`) for one meeting
@@ -4370,6 +4370,7 @@ Diarization backend to use:
 - `"simple"` - Uses audio source (mic vs loopback) to attribute speech as "You" or "Remote". No model download required.
 - `"ml"` - ONNX-based speaker embeddings (ECAPA-TDNN) to identify individual remote speakers. The model is downloaded automatically on first use. **Experimental:** speaker clustering works best with longer speech segments; short segments may produce too many unique speaker IDs.
 - `"hybrid"` - Your microphone is always "You"; ECAPA-TDNN clustering runs only over system audio and names the remote participants. One remote voice is "Remote"; once a second voice speaks, they are "Remote 1", "Remote 2" and so on, and segments already saved as "Remote" (with any label given to it) become "Remote 1". Echo of the call on your microphone cannot become a speaker. Requires the `ml-diarization` feature (the ONNX binaries) and the same model as `"ml"`; otherwise it falls back to `"simple"` with a warning, and `--diarization hybrid` on the command line is refused.
+- `"sortformer"` - Like `"hybrid"`, but NVIDIA's Nemotron-3 Diarization (Streaming Sortformer v3) tells the voices apart instead of ECAPA-TDNN clustering. It scores every speaker for every 10 ms, so two people talking over each other stay two speakers, and it keeps the same speaker from one chunk to the next. Up to 8 voices. A single mixed track (an import without `--channels`) is diarized as a whole, with speakers `SPEAKER_00`, `SPEAKER_01`, and so on. The model (402 MB, OpenMDW-1.1) is downloaded on first use. Requires the `sortformer-diarization` feature; otherwise it falls back to `"simple"` with a warning.
 - `"subprocess"` - Same as `"ml"` in a separate process for memory isolation.
 
 ```bash

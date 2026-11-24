@@ -80,7 +80,7 @@ impl ParaformerTranscriber {
         // No GPU EP registration: Paraformer runs on the CPU EP only.
         // MIGraphX 7.2 segfaults during model load on this graph; we
         // keep the engine on CPU on the AMD-targeted binary.
-        let session = Session::builder()
+        let session = crate::ort_env::session_builder()
             .map_err(|e| {
                 TranscribeError::InitFailed(format!("ONNX session builder failed: {}", e))
             })?

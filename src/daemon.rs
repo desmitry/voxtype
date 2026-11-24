@@ -688,7 +688,7 @@ fn read_trimmed_nonempty(path: &std::path::Path) -> Option<String> {
 
 /// Allowed diarization backend override values from the CLI handler. Kept in
 /// sync with the `value_parser` list on `MeetingAction::Start::diarization`.
-const ALLOWED_DIARIZATION_OVERRIDES: &[&str] = &["simple", "ml", "hybrid"];
+const ALLOWED_DIARIZATION_OVERRIDES: &[&str] = &["simple", "ml", "hybrid", "sortformer"];
 
 /// Validate a diarization backend override against the allowlist.
 ///
@@ -9442,7 +9442,10 @@ while True:
         // Pin the allowlist contents so a future expansion of the CLI's
         // `value_parser` requires touching this test, keeping the daemon
         // and CLI surfaces in sync.
-        assert_eq!(ALLOWED_DIARIZATION_OVERRIDES, &["simple", "ml", "hybrid"]);
+        assert_eq!(
+            ALLOWED_DIARIZATION_OVERRIDES,
+            &["simple", "ml", "hybrid", "sortformer"]
+        );
     }
 
     /// #636: the OSD suppression marker is created and removed, never

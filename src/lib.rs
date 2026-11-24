@@ -95,6 +95,12 @@ pub mod model_manager;
 pub mod model_selection;
 pub mod model_upgrade;
 pub mod notification;
+#[cfg(any(
+    feature = "onnx-common",
+    feature = "ml-diarization",
+    feature = "parakeet"
+))]
+pub mod ort_env;
 pub mod osd;
 pub mod output;
 pub mod setup;

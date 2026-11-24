@@ -27,7 +27,7 @@ pub struct GtcrnEnhancer {
 impl GtcrnEnhancer {
     /// Load the GTCRN model from the given ONNX file path
     pub fn load(model_path: &std::path::Path) -> Result<Self, String> {
-        let session = Session::builder()
+        let session = crate::ort_env::session_builder()
             .map_err(|e| format!("ONNX session builder failed: {}", e))?
             .with_intra_threads(1)
             .map_err(|e| format!("Failed to set threads: {}", e))?

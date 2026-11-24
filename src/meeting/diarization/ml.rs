@@ -356,7 +356,7 @@ impl MlDiarizer {
             ));
         }
 
-        match Session::builder() {
+        match crate::ort_env::session_builder() {
             Ok(mut builder) => match builder.commit_from_file(&path) {
                 Ok(session) => {
                     self.session = Some(Mutex::new(session));

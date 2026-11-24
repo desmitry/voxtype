@@ -37,6 +37,9 @@ struct HybridState {
 pub struct HybridDiarizer {
     /// Clusters loopback segments, labelling each `Auto(n)` or `Unknown`.
     remote: Box<dyn Diarizer>,
+    /// Whether a track of unknown side (a single mixed import) goes through
+    /// `remote` too, instead of being left `Unknown`.
+    diarize_unknown: bool,
     state: Mutex<HybridState>,
 }
 
@@ -45,7 +48,17 @@ impl HybridDiarizer {
     pub fn new(remote: Box<dyn Diarizer>) -> Self {
         Self {
             remote,
+            diarize_unknown: false,
             state: Mutex::new(HybridState::default()),
+        }
+    }
+
+    /// Like [`Self::new`], but a track of unknown side is diarized by
+    /// `remote` as well, with its speakers labelled `SPEAKER_00`, ...
+    pub fn diarizing_unknown(remote: Box<dyn Diarizer>) -> Self {
+        Self {
+            diarize_unknown: true,
+            ..Self::new(remote)
         }
     }
 
@@ -149,6 +162,10 @@ impl Diarizer for HybridDiarizer {
                 .collect(),
             AudioSource::Loopback => {
                 self.diarize_loopback(samples, chunk_start_ms, transcript_segments)
+            }
+            AudioSource::Unknown if self.diarize_unknown => {
+                self.remote
+                    .diarize(samples, source, chunk_start_ms, transcript_segments)
             }
             AudioSource::Unknown => transcript_segments
                 .iter()

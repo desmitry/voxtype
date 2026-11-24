@@ -9,10 +9,14 @@
 //! - **Hybrid**: the track splits you from them, ML clustering splits the
 //!   remote side into Remote 1, Remote 2, ...
 //! - **Subprocess**: Memory-isolated ML diarization for resource-constrained systems
+//! - **Sortformer**: like hybrid, with NVIDIA Sortformer frame-level speaker
+//!   activity in place of ECAPA clustering, so overlapping speech stays apart
 
 pub mod hybrid;
 pub mod ml;
 pub mod simple;
+#[cfg(feature = "sortformer-diarization")]
+pub mod sortformer;
 pub mod subprocess;
 
 use crate::meeting::data::AudioSource;
@@ -233,6 +237,17 @@ pub fn create_diarizer(config: &DiarizationConfig) -> (Box<dyn Diarizer>, Option
                 reason
             )),
         },
+        "sortformer" => match load_sortformer() {
+            Ok(remote) => {
+                tracing::info!("Using Sortformer diarization: mic is You, Sortformer splits the rest");
+                (Box::new(hybrid::HybridDiarizer::diarizing_unknown(remote)), None)
+            }
+            Err(reason) => fallback(format!(
+                "Speaker labels fall back to You and Remote, without telling remote \
+                 speakers apart: {}",
+                reason
+            )),
+        },
         "subprocess" => {
             // Subprocess diarizer for memory-isolated ML diarization
             (
@@ -242,9 +257,35 @@ pub fn create_diarizer(config: &DiarizationConfig) -> (Box<dyn Diarizer>, Option
         }
         other => fallback(format!(
             "Speaker labels fall back to mic/remote only: unknown diarization backend \
-             '{}'. Set [meeting.diarization] backend to \"simple\", \"ml\" or \"hybrid\".",
+             '{}'. Set [meeting.diarization] backend to \"simple\", \"ml\", \"hybrid\" or \"sortformer\".",
             other
         )),
+    }
+}
+
+/// The Sortformer diarizer, or why it is unavailable, worded to follow
+/// "Speaker labels fall back to ...: " and name the fix.
+fn load_sortformer() -> Result<Box<dyn Diarizer>, String> {
+    #[cfg(feature = "sortformer-diarization")]
+    {
+        let path = sortformer::SortformerDiarizer::default_model_path();
+        if !path.exists() && crate::setup::model::ensure_sortformer_model().is_none() {
+            return Err(format!(
+                "the Sortformer model is missing. Download it with: {}",
+                crate::setup::model::sortformer_download_command()
+            ));
+        }
+        sortformer::SortformerDiarizer::load(&path)
+            .map(|d| Box::new(d) as Box<dyn Diarizer>)
+            .map_err(|e| format!("the Sortformer model failed to load ({})", e))
+    }
+    #[cfg(not(feature = "sortformer-diarization"))]
+    {
+        Err(
+            "this voxtype binary was built without Sortformer diarization \
+             (the sortformer-diarization feature)."
+                .to_string(),
+        )
     }
 }
 

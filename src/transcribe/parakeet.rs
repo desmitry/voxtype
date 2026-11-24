@@ -268,10 +268,17 @@ pub(crate) fn lines_from_tokens(tokens: &[TimedToken]) -> Vec<TimedSegment> {
 /// features select, with `threads` intra-op threads when it is set. Unset
 /// keeps parakeet-rs's default of 4.
 pub(super) fn build_execution_config(threads: Option<usize>) -> Option<ExecutionConfig> {
-    let config = provider_execution_config();
-    match threads {
-        Some(n) => Some(config.unwrap_or_default().with_intra_threads(n)),
-        None => config,
+    let mut config = provider_execution_config().unwrap_or_default();
+    if let Some(n) = threads {
+        config = config.with_intra_threads(n);
+    }
+    // parakeet-rs 0.4 builds sessions only in an explicit ONNX Runtime environment.
+    match crate::ort_env::env() {
+        Ok(env) => Some(config.with_environment(env.clone())),
+        Err(e) => {
+            tracing::warn!("ONNX Runtime environment unavailable: {}", e);
+            Some(config)
+        }
     }
 }
 
@@ -592,7 +599,11 @@ mod tests {
     )))]
     #[test]
     fn unset_threads_keep_the_parakeet_rs_default_on_the_cpu() {
-        assert!(build_execution_config(None).is_none());
+        let config = build_execution_config(None).expect("environment attached");
+        assert_eq!(
+            config.intra_threads,
+            ExecutionConfig::default().intra_threads
+        );
     }
     use tempfile::TempDir;
 

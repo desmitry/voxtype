@@ -90,7 +90,9 @@
         # client code only; transcribe.cpp itself lives in voxtype-gguf-worker.
         ggufClientFeatures = [ "gguf" "cohere-gguf" "parakeet-gguf" ];
 
-        # ONNX engine feature sets
+        # ONNX engine feature sets. ml-diarization (ECAPA-TDNN speaker
+        # embeddings for the "ml" and "hybrid" meeting backends) rides along, as
+        # in the release ONNX binaries, and so does sortformer-diarization.
         # All ONNX engines: Parakeet, Moonshine, SenseVoice, Paraformer, Dolphin, Omnilingual
         onnxCpuFeatures = [
           "parakeet-load-dynamic"
@@ -100,6 +102,8 @@
           "dolphin"
           "omnilingual"
           "cohere"
+          "ml-diarization"
+          "sortformer-diarization"
         ];
 
         onnxCudaFeatures = [
@@ -111,6 +115,8 @@
           "dolphin-cuda"
           "omnilingual-cuda"
           "cohere-cuda"
+          "ml-diarization"
+          "sortformer-diarization"
         ];
 
         # Only Parakeet has AMD GPU support (via MIGraphX); other engines run on CPU
@@ -122,6 +128,8 @@
           "paraformer"
           "dolphin"
           "omnilingual"
+          "ml-diarization"
+          "sortformer-diarization"
         ];
 
         runtimePathArgs = ''

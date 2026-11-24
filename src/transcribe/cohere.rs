@@ -562,7 +562,7 @@ fn build_session(
     label: &str,
     use_gpu: bool,
 ) -> Result<Session, TranscribeError> {
-    let builder = Session::builder()
+    let builder = crate::ort_env::session_builder()
         .map_err(|e| TranscribeError::InitFailed(format!("{label} builder: {e}")))?
         .with_intra_threads(threads)
         .map_err(|e| TranscribeError::InitFailed(format!("{label} threads: {e}")))?;

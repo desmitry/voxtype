@@ -63,7 +63,7 @@ pub const ENGINE_NAMES_CSV: &str =
 /// The authoritative dispatch lives in `src/meeting/diarization/mod.rs`'s
 /// `match backend.as_str()` block; a test in `src/config/meeting.rs` pins
 /// this list against those arms.
-pub(crate) const DIARIZATION_BACKENDS: &[&str] = &["simple", "ml", "hybrid"];
+pub(crate) const DIARIZATION_BACKENDS: &[&str] = &["simple", "ml", "hybrid", "sortformer"];
 
 /// Voices of the built-in recording announcement, for `meeting start
 /// --announcement-voice`. `crate::meeting::announce::VOICES` is this list;

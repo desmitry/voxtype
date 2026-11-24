@@ -80,7 +80,7 @@ impl SenseVoiceTranscriber {
         // No GPU EP registration: SenseVoice runs on the CPU EP only.
         // MIGraphX 7.2 rejects this encoder's Where-op broadcast pattern,
         // so we keep the engine on CPU on the AMD-targeted binary.
-        let session = Session::builder()
+        let session = crate::ort_env::session_builder()
             .map_err(|e| {
                 TranscribeError::InitFailed(format!("ONNX session builder failed: {}", e))
             })?

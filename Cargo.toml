@@ -93,11 +93,11 @@ whisper-rs = { version = "0.16.0", features = ["raw-api"] }
 # Runtime at build time over native-tls (OpenSSL). openssl-sys does not build
 # against OpenSSL 4, which Arch now ships, so take parakeet-rs without its
 # defaults and ask ort for the same features with rustls instead.
-parakeet-rs = { version = "0.3.5", optional = true, default-features = false, features = ["cpu"] }
+parakeet-rs = { version = "0.4.4", optional = true, default-features = false, features = ["cpu"] }
 
 # ONNX-based ASR engines (Moonshine, SenseVoice, Paraformer, Dolphin, Omnilingual)
-ort = { version = "2.0.0-rc.12", optional = true, default-features = false, features = ["std", "ndarray", "api-24", "half", "tracing", "download-binaries", "tls-rustls", "copy-dylibs"] }
-ndarray = { version = "0.16", optional = true }
+ort = { version = "=2.0.0-rc.15", optional = true, default-features = false, features = ["std", "ndarray", "api-24", "half", "tracing", "download-binaries", "tls-rustls", "copy-dylibs"] }
+ndarray = { version = "0.17", optional = true }
 half = { version = "2", optional = true }
 tokenizers = { version = "0.20", optional = true, default-features = false, features = ["onig"] }
 # Inverse text normalization: spoken-form numbers/dates/currency to written
@@ -223,6 +223,9 @@ gpu-metal = ["whisper-rs/metal"]
 gpu-hipblas = ["whisper-rs/hipblas"]
 # ML-based speaker diarization (uses ONNX for embedding extraction)
 ml-diarization = ["dep:ort", "dep:ndarray"]
+# NVIDIA Sortformer speaker diarization (parakeet-rs, ONNX): frame-level
+# speaker activity, so overlapping speech keeps both voices apart.
+sortformer-diarization = ["ml-diarization", "dep:parakeet-rs", "parakeet-rs/sortformer"]
 # Parakeet backend (ONNX-based, alternative to Whisper)
 parakeet = ["dep:parakeet-rs", "dep:ort"]
 parakeet-cuda = ["parakeet", "parakeet-rs/cuda"]

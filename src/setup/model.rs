@@ -3248,6 +3248,58 @@ pub fn ensure_ecapa_model() -> Option<std::path::PathBuf> {
     }
 }
 
+/// NVIDIA Nemotron-3 Diarization (Streaming Sortformer v3), exported to ONNX
+/// for parakeet-rs. OpenMDW-1.1. Pinned to a revision and checked by sha256.
+pub const SORTFORMER_MODEL_FILENAME: &str = "nemotron3_diar_v3.onnx";
+const SORTFORMER_URL: &str = "https://huggingface.co/altunenes/parakeet-rs/resolve/26684938ff242cb4f7a65fad712476c6015a4477/nemotron-3-diarization/nemotron3_diar_v3.onnx";
+const SORTFORMER_SHA256: &str = "c32d6056f1ca52bdd50a74e1e7c66d91e5147bc29f19ffa4c39cbe5452397d15";
+
+/// Command that installs the Sortformer diarization model by hand.
+#[cfg(feature = "sortformer-diarization")]
+pub fn sortformer_download_command() -> String {
+    model_download_command(SORTFORMER_URL.to_string(), SORTFORMER_MODEL_FILENAME)
+}
+
+/// Ensure the Sortformer diarization model (402 MB) is downloaded and intact.
+/// Returns its path, or None if the download failed.
+pub fn ensure_sortformer_model() -> Option<std::path::PathBuf> {
+    let models_dir = Config::models_dir();
+    let model_path = models_dir.join(SORTFORMER_MODEL_FILENAME);
+    if model_path.exists() {
+        return Some(model_path);
+    }
+    if let Err(e) = std::fs::create_dir_all(&models_dir) {
+        eprintln!("Warning: Could not create models directory: {}", e);
+        return None;
+    }
+    println!("Downloading Sortformer speaker diarization model (402 MB)...");
+    let fetched = download_to_part(
+        SORTFORMER_URL,
+        &model_path,
+        "sortformer",
+        SORTFORMER_MODEL_FILENAME,
+        Some(402_167_515),
+    )
+    .and_then(|part| match sha256_file(&part) {
+        Ok(sum) if sum == SORTFORMER_SHA256 => promote_part(&part, &model_path),
+        Ok(sum) => {
+            let _ = std::fs::remove_file(&part);
+            anyhow::bail!("checksum mismatch (got {sum})")
+        }
+        Err(e) => Err(e),
+    });
+    match fetched {
+        Ok(()) => {
+            println!("Speaker diarization model downloaded.");
+            Some(model_path)
+        }
+        Err(e) => {
+            eprintln!("Warning: Failed to download the Sortformer model ({e}).");
+            None
+        }
+    }
+}
+
 /// Which config writer a `setup model --set <name>` should route to.
 ///
 /// `--set` used to funnel every name into the whisper writer, which

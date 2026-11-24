@@ -282,7 +282,7 @@ pub struct MeetingDiarizationConfig {
     #[serde(default = "default_true")]
     pub enabled: bool,
 
-    /// Diarization backend: "simple", "ml" or "hybrid".
+    /// Diarization backend: "simple", "ml", "hybrid" or "sortformer".
     /// The match arms in `src/meeting/diarization/mod.rs` are the source of
     /// truth for what the daemon actually dispatches on; the CLI's
     /// `--diarization` value parser is pinned to the same set via

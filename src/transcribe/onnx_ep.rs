@@ -22,7 +22,7 @@
 //! still runs the model on CPU.
 
 #[cfg(feature = "onnx-common")]
-use ort::execution_providers::ExecutionProviderDispatch;
+use ort::ep::ExecutionProviderDispatch;
 #[cfg(feature = "onnx-common")]
 use ort::session::builder::{BuilderResult, SessionBuilder};
 
@@ -61,17 +61,17 @@ fn compiled_providers() -> Vec<(&'static str, ExecutionProviderDispatch)> {
 
     #[cfg(feature = "onnx-tensorrt-enabled")]
     if cudnn {
-        use ort::execution_providers::TensorRTExecutionProvider;
+        use ort::ep::TensorRTExecutionProvider;
         providers.push(("TensorRT", TensorRTExecutionProvider::default().build()));
     }
     #[cfg(feature = "onnx-cuda-enabled")]
     if cudnn {
-        use ort::execution_providers::CUDAExecutionProvider;
+        use ort::ep::CUDAExecutionProvider;
         providers.push(("CUDA", CUDAExecutionProvider::default().build()));
     }
     #[cfg(feature = "onnx-migraphx-enabled")]
     {
-        use ort::execution_providers::MIGraphXExecutionProvider;
+        use ort::ep::MIGraphXExecutionProvider;
         providers.push(("MIGraphX", MIGraphXExecutionProvider::default().build()));
     }
 

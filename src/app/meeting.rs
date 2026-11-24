@@ -110,7 +110,7 @@ pub(crate) async fn run_meeting_command(
             // the binaries that DO carry ml-diarization.
             let needs_ml = diarization
                 .as_deref()
-                .filter(|b| matches!(*b, "ml" | "hybrid"));
+                .filter(|b| matches!(*b, "ml" | "hybrid" | "sortformer"));
             if let (Some(backend), false) = (needs_ml, cfg!(feature = "ml-diarization")) {
                 eprintln!(
                     "Error: --diarization {backend} requested but this binary was not built with"
