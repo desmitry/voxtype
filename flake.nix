@@ -32,9 +32,10 @@
         commonBuildInputs = with pkgs; [
           alsa-lib
           openssl
-          # nixpkgs' cargo hook sets RUSTONIG_SYSTEM_LIBONIG, so onig_sys
-          # (tokenizers) links the system library instead of building its own.
+          # nixpkgs' cargo hook makes onig_sys (tokenizers) and libsqlite3-sys
+          # (rusqlite) link the system libraries instead of building their own.
           oniguruma
+          sqlite
         ];
 
         # Cargo.lock contains four crates from the same pinned openvino-rs Git
