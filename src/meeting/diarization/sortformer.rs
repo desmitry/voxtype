@@ -19,8 +19,8 @@ use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
 /// Mean activity under which nobody counts as speaking in a segment. Such a
-/// segment is left `Unknown`, and the hybrid wrapper gives it to whoever
-/// spoke last.
+/// segment is left `Unknown`; on the call track the hybrid wrapper gives it
+/// to whoever spoke last.
 const MIN_ACTIVITY: f32 = 0.2;
 
 /// Streaming Sortformer over one track of a meeting.
@@ -73,8 +73,8 @@ impl Diarizer for SortformerDiarizer {
         chunk_start_ms: u64,
         transcript_segments: &[TranscriptSegment],
     ) -> Vec<DiarizedSegment> {
-        // Every chunk goes through the model, even one with no text, so the
-        // speaker cache keeps following the call.
+        // The model keeps its speaker cache between calls, so speaker N is
+        // the same voice in every chunk of the meeting.
         let raw = match self.model.lock() {
             Ok(mut model) => model.diarize_chunk_raw(samples),
             Err(_) => {
