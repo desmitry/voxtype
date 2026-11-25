@@ -414,6 +414,8 @@
         in pkg.overrideAttrs (old: {
           # Tell ort-sys where to find ONNX Runtime (avoids sandbox download)
           ORT_LIB_LOCATION = "${pkgs.onnxruntime}/lib";
+          # Parakeet loads ONNX Runtime with load-dynamic; its tests need the dylib too.
+          ORT_DYLIB_PATH = "${pkgs.onnxruntime}/lib/libonnxruntime.${libExt}";
         });
 
         # Build the ONNX + CUDA variant for NVIDIA GPUs
@@ -432,6 +434,7 @@
           };
         in pkg.overrideAttrs (old: {
           ORT_LIB_LOCATION = "${onnxruntimeCuda}/lib";
+          ORT_DYLIB_PATH = "${onnxruntimeCuda}/lib/libonnxruntime.${libExt}";
         });
 
         # Build the ONNX + MIGraphX variant for AMD GPUs
@@ -452,6 +455,7 @@
           };
         in pkg.overrideAttrs (old: {
           ORT_LIB_LOCATION = "${onnxruntimeRocm}/lib";
+          ORT_DYLIB_PATH = "${onnxruntimeRocm}/lib/libonnxruntime.${libExt}";
         });
 
         # OSD frontend packages. The launcher binary (`voxtype-osd`) ships
