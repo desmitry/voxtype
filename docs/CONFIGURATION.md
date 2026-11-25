@@ -1424,6 +1424,22 @@ language = "auto"
 remote_send_auto_language = true
 ```
 
+### remote_per_utterance
+
+**Type:** Boolean
+**Default:** `false`
+**Required:** No
+
+In meeting mode, sends each utterance to the remote server as its own request instead of one request per 30-second chunk. Use it with a fast local server. Whisper given a chunk that opens with a long silence can answer with a stock phrase ("Thank you.") and skip the speech after it; an utterance on its own has no such silence. A server that returns no segment times also gets a timestamp per utterance this way.
+
+**Example:**
+```toml
+[whisper]
+mode = "remote"
+remote_endpoint = "http://127.0.0.1:52625"
+remote_per_utterance = true
+```
+
 ### whisper_cli_path
 
 **Type:** String

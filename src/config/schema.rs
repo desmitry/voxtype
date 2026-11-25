@@ -2146,6 +2146,16 @@ pub const CONFIG_KEYS: &[KeySpec] = &[
     )
     .for_engine("whisper"),
     spec(
+        "whisper.remote_per_utterance",
+        "whisper",
+        "remote_per_utterance",
+        KeyType::Bool,
+        "Advanced",
+        "Remote request per utterance",
+        "In meetings, send each utterance to the remote server on its own instead of one request per chunk.",
+    )
+    .for_engine("whisper"),
+    spec(
         "whisper.whisper_cli_path",
         "whisper",
         "whisper_cli_path",
@@ -3489,6 +3499,7 @@ pub fn resolve(key: &str, cfg: &Config) -> Option<Json> {
         "whisper.streaming" => json!(cfg.whisper.streaming),
         "whisper.remote_timeout_secs" => json!(cfg.whisper.remote_timeout_secs),
         "whisper.remote_send_auto_language" => json!(cfg.whisper.remote_send_auto_language),
+        "whisper.remote_per_utterance" => json!(cfg.whisper.remote_per_utterance),
         "whisper.whisper_cli_path" => opt_str(cfg.whisper.whisper_cli_path.as_ref()),
         "whisper.max_loaded_models" => json!(cfg.whisper.max_loaded_models),
         "whisper.cold_model_timeout_secs" => json!(cfg.whisper.cold_model_timeout_secs),

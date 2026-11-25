@@ -233,6 +233,14 @@ pub struct WhisperConfig {
     #[serde(default)]
     pub remote_send_auto_language: bool,
 
+    /// Meeting mode sends each utterance to the remote server on its own
+    /// instead of one request per 30 s chunk (default: false). For a fast
+    /// local server: Whisper given a chunk that opens with a long silence
+    /// can write a stock phrase and skip the speech after it, and a server
+    /// without segment times gets a timestamp per utterance this way.
+    #[serde(default)]
+    pub remote_per_utterance: bool,
+
     // --- CLI backend settings ---
     /// Path to whisper-cli binary (optional, searches PATH if not set)
     /// Used when mode = "cli"
@@ -305,6 +313,7 @@ impl Default for WhisperConfig {
             remote_api_key: None,
             remote_timeout_secs: None,
             remote_send_auto_language: false,
+            remote_per_utterance: false,
             whisper_cli_path: None,
         }
     }

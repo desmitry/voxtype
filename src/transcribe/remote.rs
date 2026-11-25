@@ -40,6 +40,8 @@ pub struct RemoteTranscriber {
     active_vocabulary: Mutex<Vec<String>>,
     /// Send an explicit `language=auto` field instead of omitting it
     send_auto_language: bool,
+    /// Meetings send one request per utterance (`remote_per_utterance`)
+    per_utterance: bool,
     /// Request timeout
     timeout: Duration,
     /// Whether the server returns segments for `verbose_json`: unknown
@@ -131,6 +133,7 @@ impl RemoteTranscriber {
             initial_prompt,
             active_vocabulary: Mutex::new(Vec::new()),
             send_auto_language: config.remote_send_auto_language,
+            per_utterance: config.remote_per_utterance,
             timeout,
             verbose_json: Mutex::new(None),
         })
@@ -386,6 +389,10 @@ fn verbose_segments(json: &serde_json::Value, duration_secs: f32) -> Option<Vec<
 }
 
 impl Transcriber for RemoteTranscriber {
+    fn short_clips_are_cheap(&self) -> bool {
+        self.per_utterance
+    }
+
     fn set_vocabulary(&self, terms: &[String]) {
         if let Ok(mut active) = self.active_vocabulary.lock() {
             active.clear();

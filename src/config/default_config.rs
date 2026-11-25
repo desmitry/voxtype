@@ -202,6 +202,11 @@ translate = false
 # endpoints treat as auto-detect. whisper.cpp's server instead falls back to its
 # own -l setting (default "en"); enable this so "auto" is sent explicitly.
 # remote_send_auto_language = true
+#
+# Meeting mode: one request per utterance instead of one per 30 s chunk (default: false)
+# For a fast local server. Keeps a chunk that opens with a long silence from being
+# answered with a stock phrase, and times each utterance when the server returns no segments.
+# remote_per_utterance = true
 
 [output]
 # Primary output mode: "type" or "clipboard"
